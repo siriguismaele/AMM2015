@@ -1,0 +1,123 @@
+<?php 
+    include('inc/top_site.php'); 
+
+    if(isset($_SESSION['logged']) && $_SESSION['logged'] == true)
+        header("Location: index.php");
+        
+   
+
+    $error = false;
+
+    if(isset($_POST['login']))
+    {
+        $user = $_POST['email'];
+        $pass = $_POST['password'];
+        $mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+        
+        if(trim($user) == '' || trim($pass) == ''){ 
+            $error = true;
+            $_SESSION['logged'] = false;
+        }        
+        $res    = $mysqli->query("select* from utenti where email='$user' AND password='$pass'" );
+        if($res->num_rows == 1)
+        {
+            $array = mysqli_fetch_array($res);
+            $_SESSION['email']   = $array['email'];
+            $_SESSION['livello']      = $array['livello'];
+            $_SESSION['logged']     = true;
+            $mysqli->close();
+            header("Location: index.php");
+        }
+        else
+        {
+            $error = true;
+            $_SESSION['logged'] = false;
+            
+        }
+        
+        
+    }
+?>
+
+    <body>
+        
+            <?php include('inc/header.php');?>
+                 <div class="container">
+	<!-- spazio content dove è inserita l'immagine della prima pagina del sito e la foto allegata -->
+	<div class="content"> 
+	<p><img src="images/repair.png" alt="" width="346" height="343" style="float:left">
+		Benvenuti su Infoelsi. Non solo potrai trovare la soluzione ai tuoi problemi, ma potrai scegliere tra una vasta gamma di servizi.
+		Le nostre riparazioni vengono effettuate con ricambi OEM (original equipment manufacturer), il meglio presente sul mercato.
+		Infoesi sa bene quanto siano importanti il computer e i device per il suo proprietario. Per questo motivo trattiamo con cura ogni prodotto come se fosse nostro.
+		</p>
+</div>
+
+
+<!-- form per il login di qualsiasi utente -->
+            <div class="sidebar">
+		<h1>Sei gi&agrave; registrato?</h1>
+
+                <?php if($error): ?>
+                    <div class="errore"> Login errato, riprova </div>
+                <? endif;?>
+
+                <form method="post" action="login.php">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <label for="email">Username</label>
+                            </td>
+                            <td>
+                                <input name="email" id="email" type="text" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="password">Password</label>
+                            </td>
+                            <td>
+                                <input name="password" id="password" type="password"/> 
+                            </td>
+                        </tr>                    
+                    </table>
+                    <input type="submit" value="Login" name="login"/>
+                </form>
+</div>
+   <div class="sidebar">
+		<h1>Non sei registrato?</h1>
+
+
+                <form method="post" action="libs/funzioni.php">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <label for="email">Username</label>
+                            </td>
+                            <td>
+                                <input name="email" id="email" type="text" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="livello">User</label>
+                            </td>
+                            <td>
+                                <input name="livello" id="livello" type="text" value="user" disabled/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="password">Password</label>
+                            </td>
+                            <td>
+                                <input name="password" id="password" type="password"/> 
+                            </td>
+                        </tr>                    
+                    </table>
+                    <input type="submit" value="Login" name="newuser"/>
+                </form>
+
+<a href="about.php">Maggiori informazioni</a>
+</div>
+    </body>
+</html>
