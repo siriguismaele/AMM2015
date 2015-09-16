@@ -41,7 +41,7 @@
 		$prodottoCancella 	= $mysqli->query("DELETE FROM prodotti WHERE id=$id");
 		
 		if($prodottoCancella)
-			header('Location: index.php');
+			return true;
 		else
 			return false;
 	}
